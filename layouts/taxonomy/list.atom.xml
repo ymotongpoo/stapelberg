@@ -1,0 +1,28 @@
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Michael Stapelbergs Website: posts tagged {{ .Title | urlize}}</title>
+  <link href="{{ .Permalink }}feed.xml" rel="self"/>
+  <link href="{{ .Permalink }}"/>{{ if not .Date.IsZero }}
+  <updated>{{ .Date.Format "2006-01-02T15:04:05-07:00" | safeHTML }}</updated>{{ end }}
+  <id>{{ .Permalink }}</id>{{ with .Site.Author.name }}
+  <author>
+    <name>{{.}}</name>{{ with $.Site.Author.email }}
+    <email>{{.}}</email>{{end}}
+  </author>{{end}}
+  <generator>Hugo -- gohugo.io</generator>{{ range first 15 (where .Data.Pages "Section" "posts") }}
+  <entry>
+    {{ `<title type="html"><![CDATA[` | safeHTML }}{{ .Title }}]]></title>
+    <link href="{{ .Permalink }}"/>
+    <id>{{ .Permalink }}</id>{{ with .Site.Params.Author }}
+    <author>
+      <name>{{.}}</name>
+    </author>{{end}}
+    {{- $fmt := "2006-01-02T15:04:05-07:00" }}
+    <published>{{ .Date.Format $fmt | safeHTML }}</published>
+    {{- if (not .GitInfo) }}
+    <updated>{{ .Lastmod.Format $fmt | safeHTML }}</updated>
+    {{ else }}
+    <updated>{{ .GitInfo.CommitDate.Format $fmt | safeHTML }}</updated>
+    {{ end -}}
+    {{ `<content type="html"><![CDATA[` | safeHTML }}{{ .Content }}]]></content>
+  </entry>{{ end }}
+</feed>

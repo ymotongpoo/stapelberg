@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+  {{ partial "head.html" . }}
+
+  <body>
+    <div class="container-fluid">
+      <div class="row">
+	{{ partial "menu.html" . }}
+	<div id="contentBox" class="col-md-10">
+	  <h2 class="title">{{ .Title }}</h2>
+	  <div style="margin-bottom: 2em">
+	    {{- $pub := .Date.Format "2006-01-02" -}}
+	    {{- $mod := "" -}}
+	    {{- if (not .GitInfo) }}
+            {{- $mod = .Lastmod.Format "2006-01-02" -}}
+	    {{ else }}
+            {{- $mod = .Page.GitInfo.CommitDate.Format "2006-01-02" -}}
+	    {{ end -}}
+	    {{ if eq $pub $mod }}
+	    <span id="date">published {{ $pub }}</span>
+	    {{ else }}
+	    <span id="date">published {{ $pub }}, last modified {{ $mod }}</span>
+	    {{ end }}
+	  {{ if .Params.tags }}
+	  {{ if eq (len .Params.tags) 1 }}
+	  in tag
+	  {{ else }}
+	  in tags
+	  {{ end }}
+	  {{ range $idx, $tag := .Params.tags }}
+	  <span class="tag"><a href="/posts/tags/{{ $tag | urlize }}/">{{ $tag }}</a></span>
+	  {{ end }}
+	  {{ end }}
+	  <span style="background-color: black; border-radius: 25%; padding-left: 0.1em; padding-right: 0.1em">
+	    <a style="text-decoration: none; color: white" href="https://github.com/stapelberg/hugo/edit/master/content/posts/{{ .File.LogicalName }}">✎</a>
+	  </span>
+	  </div>
+	  <div class="Artikel" id="content">
+	    {{- if gt .WordCount 1000 }}
+	    <style type="text/css">
+	      #TableOfContents > ul, #TableOfContents > ul > li > ul {
+		  list-style: none;
+		  margin: 0;
+		  padding: 0;
+	      }
+	    </style>
+	    <details style="margin-bottom: 2em">
+	      <summary>Table of contents</summary>
+	      {{ .TableOfContents }}
+	    </details>
+	    {{- end }}
+	    {{ .Content }}
+	  </div>
+	</div>
+      </div>
+    </div>
+  </body>
+</html>
